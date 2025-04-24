@@ -3,42 +3,41 @@ Existen N personas que deben fotocopiar un documento. La fotocopiadora sólo pue
     f. Modificar la solución (e) para el caso en que sean 10 fotocopiadoras. El empleado le indica a la persona cuál fotocopiadora usar y cuándo hacerlo.
 */
 
-Monitor Fotocopiadora{
+Monitor Fotocopiadora {
     cond cola[N];
     cond emp;
-    cola fotocLibres;
-    int libres = 10;
     cola fila;
     int auxId;
+    cola fotocLibres;
 
-    Procedure siguiente(){
-        if( not fila.empty() ){
+    Procedure siguiente() {
+        if (not fila.empty() and not fotocLibres.empty()) {
             auxId = fila.pop();
-
-
             signal(cola[auxId]);
-            libre--;
         }
+        wait(emp);
     }
 
-    Procedure entrar(id: in int){
-        // Persona entra y se agrega a la cola
+    Procedure entrar(id: in int, fotocId: out int) {
         fila.push(id);
-        wait(cola[id]);
+        signal(emp); 
+        wait(cola[id]); 
+        /* asignar fotocopiadora */
+        fotocId = fotocLibres.pop();
     }
 
-    Procedure salir(fotId: in int){
-        // Persona sale y despierta al empleado
-        fotocLibres.push(fotId);
-        libres ++;
+    Procedure salir(fotocId: in int) {
+        fotocLibres.push(fotocId);
         signal(emp); 
     }
 }
 
 Process Persona[id:0..N-1]{
-    Fotocopiadora.entrar(id);
-    // Fotocopiar
-    Fotocopiadora.salir();
+    int fotocId = -1;
+
+    Fotocopiadora.entrar(id, fotocId);
+    // Fotocopiar[fotocId]();
+    Fotocopiadora.salir(fotocId);
 }
 
 Process Empleado{
