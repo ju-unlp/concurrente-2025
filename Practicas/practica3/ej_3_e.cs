@@ -1,36 +1,33 @@
 /*
 Existen N personas que deben fotocopiar un documento. La fotocopiadora sólo puede ser usada por una persona a la vez. Analice el problema y defina qué procesos, recursos y monitores serán necesarios/convenientes, además de las posibles sincronizaciones requeridas para resolver el problema. Luego, resuelva considerando las siguientes situaciones:
     e. Modifique la solución de (b) para el caso en que además haya un Empleado que le indica a cada persona cuando debe usar la fotocopiadora.
-    
-    f. Modificar la solución (e) para el caso en que sean 10 fotocopiadoras. El empleado le indica a la persona cuál fotocopiadora usar y cuándo hacerlo.
 */
 
-Monitor Fotocopiadora{
+Monitor Fotocopiadora {
     cond cola[N];
     cond emp;
-    bool libre = true;
     cola fila;
     int auxId;
+    bool libre = true;
 
-    Procedure siguiente(){
-        if( not fila.empty() ){
+    Procedure siguiente() {
+        if (not fila.empty() and libre) {
+            libre = false;
             auxId = fila.pop();
             signal(cola[auxId]);
-            libre = false;
-        } else {
-            libre = true;
         }
+        wait(emp);
     }
 
-    Procedure entrar(id: in int){
-        // Persona entra y se agrega a la cola
+    Procedure entrar(id: in int) {
         fila.push(id);
-        wait(cola[id]);
+        signal(emp); // despierta al empleado
+        wait(cola[id]); // espera a que lo habiliten
     }
 
-    Procedure salir(){
-        // Persona sale y despierta al empleado
-        signal(emp); 
+    Procedure salir() {
+        libre = true;
+        signal(emp); // avisa al empleado que terminó
     }
 }
 

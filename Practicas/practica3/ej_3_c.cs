@@ -13,7 +13,7 @@ Monitor Fotocopiadora{
 
     Procedure.entrar(id, edad: in int){
         if(not libre){
-            fila.insertarOrdenado(id, edad); // inserta ordenado por edad mayor a menor
+            fila.insertarOrdenado(id, edad); 
             wait(cola[id]);
             personas++;
         } else {

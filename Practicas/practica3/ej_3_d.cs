@@ -9,7 +9,7 @@ Monitor Fotocopiadora{
 
     Procedure.entrar(id: in int){
         if(idActual <> id){
-            wait(cola[id]);
+            wait(cola);
         }
     }
 
