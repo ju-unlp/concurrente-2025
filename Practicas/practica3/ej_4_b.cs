@@ -1,59 +1,93 @@
 /*
 En un corralón de materiales se deben atender a N clientes de acuerdo con el orden de llegada. Cuando un cliente es llamado para ser atendido, entrega una lista con los productos que comprará, y espera a que alguno de los empleados le entregue el comprobante de la compra realizada.
-    a. Implemente una solución considerando que el corralón tiene un único empleado y cada cliente hace un único pedido. El empleado debe terminar su ejecución.
-    
     b. Implemente una solución considerando que el corralón tiene E empleados (E > 1). Los empleados no deben terminar su ejecución.
-    
-    c. Modifique la solución (b) considerando que los empleados deben terminar su ejecución cuando se hayan atendido todos los clientes (cada cliente hace un único pedido).
 */
 
 Monitor Corralon{
-    int clientes = N;
     cond cola;
-    int esperando = 0;
-    bool libre;
+    cond empleados;
+    cola empLibres;
 
     Procedure arribo(){
         wait(cola);
     }
 
-    Procedure pedido(pedido: IN String){
-        // entregar pedido
+    Procedure asignarTurno(emp: OUT int){
+        /* Asigna empleado para un cliente y lo despierta? */
+        emp = emp.libres.pop();
     }
 
-    Procedure recibirComprobante(comprobante: OUT String){
-
-    }
-
-    Procedure hacerComprobante(){
-
-    }
-
-    Procedure atencion(){
-        // si no quedan mas por atender terminar true
+    Procedure siguiente(empId: in int){
+        /* Si hay cliente en la fila, lo despierta, dsp se duerme */
+        empLibres.push(empId);
+        if (not cola.empty()) {
+            signal(cola);
+        }
+        // wait(empleados); 
+        // preguntar si es mejor dejarlo y hacer un signal_all(empleados); en arribo()
     }
 
 }
-Process Empleado{
-    bool terminar = false;
+
+Monitor Atencion[E]{
+    cond cliente;
+    cond emp;
+    String pedido = "";
+    String comprobante = "";
+
+    Procedure pedido(p: IN String){
+        /* Cliente manda su pedido y despierta al empleado */
+        pedido = p;
+        signal(emp);
+        wait(cliente);
+    }
+
+    Procedure recibirComprobante(c: OUT String){
+        /* Cliente recibe al empleado */
+        c = comprobante;
+    }
+
+        Procedure atencion(p: OUT String){
+        /* Si el pedido no está me duermo, sino me guardo el pedido */
+        if(pedido == "") {
+            wait(emp);
+        }
+        p = pedido;
+    }
+
+    Procedure entregarComprobante(c> IN String){
+        /* Cliente entrega comprobante */
+        comprobante = c;
+        signal(cliente);
+        pedido = "";
+        comprobante = "";
+    }
+}
+
+Process Empleado[id: 0..E-1]{
     String pedido;
     String comprobante;
 
-    while (not terminar) {
-        Corralon.atencion(terminar, pedido);
-        // hacer comprobante
-        Corralon.hacerComprobante(comprobante);
+    while (true) {
+        Corralon.siguiente(id);
+        Atencion[id].atencion(pedido);
+        // hacerPedido(pedido);
+        // hacerComprobante(comprobante);
+        Atencion[id].entregarComprobante(comprobante);
     }
 }
 
 Process Cliente[id: 0..N]{
+    id empleado;
     String pedido;
     String comprobante;
 
     // avisa que llegó
     Corralon.arribo();
+    // recibe turno
+    Corralon.asignarTurno(empleado);
     // da el pedido
-    Corralon.pedido(pedido);
+    Atencion[empleado].pedido(pedido);
     // espera el comprobante
-    Corralon.recibirComprobante(comprobante);
+    Atencion[empleado].recibirComprobante(comprobante);
 }
