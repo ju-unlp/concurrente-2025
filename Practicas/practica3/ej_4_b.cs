@@ -4,27 +4,30 @@ En un corralón de materiales se deben atender a N clientes de acuerdo con el or
 */
 
 Monitor Corralon{
+    int esperando = 0;
     cond cola;
     cond empleados;
     cola empLibres;
 
     Procedure arribo(){
+        esperando++;
         wait(cola);
+        signal(empleados);
     }
 
     Procedure asignarTurno(emp: OUT int){
         /* Asigna empleado para un cliente y lo despierta? */
-        emp = emp.libres.pop();
+        emp = empLibres.pop();
     }
 
     Procedure siguiente(empId: in int){
         /* Si hay cliente en la fila, lo despierta, dsp se duerme */
         empLibres.push(empId);
-        if (not cola.empty()) {
-            signal(cola);
+        while(esperando == 0) {
+            wait(empleados);
         }
-        // wait(empleados); 
-        // preguntar si es mejor dejarlo y hacer un signal_all(empleados); en arribo()
+        esperando--;
+        signal(cola);
     }
 
 }
@@ -55,7 +58,7 @@ Monitor Atencion[E]{
         p = pedido;
     }
 
-    Procedure entregarComprobante(c> IN String){
+    Procedure entregarComprobante(c: IN String){
         /* Cliente entrega comprobante */
         comprobante = c;
         signal(cliente);

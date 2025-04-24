@@ -4,6 +4,7 @@ En un corralón de materiales se deben atender a N clientes de acuerdo con el or
 */
 
 Monitor Corralon{
+    int esperando = 0;
     int clientes = N;
     cond cola;
     cond emp;
@@ -14,6 +15,7 @@ Monitor Corralon{
     Procedure arribo(){
         /* Cliente llega, despierta empleado, se duerme */
         signal(emp);
+        esperando ++;
         wait(cola);
     }
 
@@ -37,16 +39,17 @@ Monitor Corralon{
 
     Procedure siguiente(terminar: OUT bool){
         /* Si hay cliente en la fila, lo despierta y chequea si es el último, dsp se duerme */
-        if (not cola.empty()) {
-            signal(cola);
-            clientes--;
-            if (clientes == 0) {
-                terminar = true;
-            } else {
-                terminar = false;
-            }
+        if(esperando == 0){
+            wait(cliente);
         }
-        wait(emp);
+        esperando--;
+        signal(cola);
+        clientes--;
+        if (clientes == 0) {
+            terminar = true;
+        } else {
+            terminar = false;
+        }
     }
 
     Procedure atencion(p: OUT String){
