@@ -6,11 +6,9 @@ Existen N personas que deben fotocopiar un documento. La fotocopiadora sólo pue
 Monitor Fotocopiadora{
     cond cola;
     bool libre = true;
-    int personas = 0;
 
     Procedure.entrar(){
         if(not libre){
-            personas ++;
             wait(cola);
         } else {
             libre = false;
@@ -18,12 +16,8 @@ Monitor Fotocopiadora{
     }
 
     Procedure.salir(){
-        if(personas > 0){
-            personas --;
-            signal(cola);
-        } else {
-            libre = true;
-        }
+        signal(cola);
+        libre = true;
     }
 }
 
