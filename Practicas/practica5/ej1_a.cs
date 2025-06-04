@@ -43,27 +43,27 @@ Procedure EjPuenteA is
     Begin 
         loop
             select
-                Accept salirAuto() is
+                Accept salirAuto() do
                     pesoTotal := pesoTotal-1;
                 End salirAuto;
             or
-                Accept salirCamioneta() is
+                Accept salirCamioneta() do
                     pesoTotal := pesoTotal-2;
                 End salirCamioneta;
             or 
-                Accept salirCamion() is
+                Accept salirCamion() do
                     pesoTotal := pesoTotal-3;
                 End salirCamion;
             or 
-                when (pesoTotal <= 4) => Accept entrarAuto() is 
+                when (pesoTotal <= 4) => Accept entrarAuto() do
                                             pesoTotal =: pesoTotal + 1;
                                         End entrarAuto;
             or 
-                when (pesoTotal <= 3) => Accept entrarCamioneta() is 
+                when (pesoTotal <= 3) => Accept entrarCamioneta() do
                                             pesoTotal =: pesoTotal + 2;
                                         End entrarCamioneta;
             or 
-                when (pesoTotal <= 2) => Accept entrarCamion() is 
+                when (pesoTotal <= 2) => Accept entrarCamion() do
                                             pesoTotal =: pesoTotal + 3;
                                         End entrarCamion;
             end select;
