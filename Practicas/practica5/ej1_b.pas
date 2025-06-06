@@ -1,12 +1,12 @@
-/*
+{
 Se requiere modelar un puente de un único sentido que soporta hasta 5 unidades de peso. El peso de los vehículos depende del tipo: cada auto pesa 1 unidad, cada camioneta pesa 2 unidades y cada camión 3 unidades. Suponga que hay una cantidad innumerable de vehículos (A autos, B camionetas y C camiones). Analice el problema y defina qué tareas, recursos y sincronizaciones serán necesarios/convenientes para resolver el problema.
     a. Realice la solución suponiendo que no se tiene ningún orden ni prioridad entre los diferentes tipos de vehículos.
 
     b. Modifique la solución de (a) para que tengan mayor prioridad los camiones que el resto de los vehículos.
-*/
+}
 
 Procedure EjPuenteA is
-    /* especificación tasks */
+    //* especificación tasks */
     Task type Autos;
     Task type Camionetas;
     Task type Camiones;
@@ -18,11 +18,11 @@ Procedure EjPuenteA is
         Entry salirCamioneta();
         Entry salirCamion();
     End Puente;
-    /* declaración variables task type */
+    //* declaración variables task type */
     arrAutos: array(1..A) of Autos;
     arrCamionetas: array(1..B) of Camionetas;
     arrCamiones: array(1..C) of Camiones;
-    /* cuerpo tasks */
+    //* cuerpo tasks */
     Task Body Autos is
     Begin
         Puente.entrarAuto();

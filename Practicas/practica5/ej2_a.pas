@@ -1,29 +1,26 @@
-/*
+{/*
 Se quiere modelar el funcionamiento de un banco, al cual llegan clientes que deben realizar un pago y retirar un comprobante. Existe un único empleado en el banco, el cual atiende de acuerdo con el orden de llegada.
+    a. Implemente una solución donde los clientes llegan y se retiran sólo después de haber sido atendidos.
+*/}
 
-    c. Implemente una solución donde los clientes se retiran si no son atendidos inmediatamente. 
-*/
-
-// Asumir que existe cant C
+// banco 
+// clientes hacen pago y sacan comprobante
+// empleado atiende con orden de llegada
 
 Procedure Banco is
-    /* especificación tasks */
+    //* especificación tasks */
     Task Empleado is
         Entry Atencion(Pago: IN integer; comprobante: OUT texto);
     End Empleado;
     Task Type Clientes;
-    /* declaración variables tasktype */
+    //* declaración variables tasktype */
     arrClientes : array(1..C) of Clientes;
-    /* cuerpo tasks */
+    //* cuerpo tasks */
     Task Body Clientes is
         c: texto;
         pago: integer;
     Begin
-        select 
-            Empleado.Atencion(pago, c);
-        else
-            null
-        end Select;
+        Empleado.Atencion(pago, c);
     End Clientes;
     //
     Task Body Empleado is 
@@ -37,5 +34,5 @@ Procedure Banco is
         end loop;
     End Empleado;
 Begin
-    null;
+    null
 End Banco;
